@@ -9,7 +9,6 @@ namespace RedRunner.Enemies
 
 	public class Water : Enemy
 	{
-
 		[SerializeField]
 		private Collider2D m_Collider2D;
 
@@ -31,7 +30,7 @@ namespace RedRunner.Enemies
 		{
 			target.Die ();
 			Vector3 spawnPosition = target.transform.position;
-			spawnPosition.y += -1f;
+			spawnPosition.y += -1f;	// Does this affect the the height of the splash?
 			ParticleSystem particle = Instantiate<ParticleSystem> (target.WaterParticleSystem, spawnPosition, Quaternion.identity);
 			Destroy (particle.gameObject, particle.main.duration);
 			AudioManager.Singleton.PlayWaterSplashSound (transform.position);

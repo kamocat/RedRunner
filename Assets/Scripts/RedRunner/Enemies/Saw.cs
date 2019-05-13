@@ -9,12 +9,18 @@ namespace RedRunner.Enemies
 
 	public class Saw : Enemy
 	{
-
+		/* Can't serialize properties
+		 * https://docs.unity3d.com/ScriptReference/SerializeField.html
+		 * https://docs.unity3d.com/Manual/script-Serialization.html
+		 */
 		[SerializeField]
 		private Collider2D m_Collider2D;
 		[SerializeField]
 		private Transform targetRotation;
 		[SerializeField]
+		/* One of the saws definitely speeds up, but I don't see that parameter here. 
+		 * It's the big saw that chases you.
+		 * I also don't see a parameter for the saw size. */
 		private float m_Speed = 1f;
 		[SerializeField]
 		private bool m_RotateClockwise = false;
@@ -63,6 +69,9 @@ namespace RedRunner.Enemies
 				if (m_AudioSource.clip != m_SawingSound) {
 					m_AudioSource.clip = m_SawingSound;
 				} else if (!m_AudioSource.isPlaying) {
+					/* Why the "else"? Does changing the clip automatically play?
+					 * We should cause it to play the first time through, rather than needing two calls.
+					 * Or, we should start it playing in the "OnCollisionEnter" rather than the CollisionStay */
 					m_AudioSource.Play ();
 				}
 			}

@@ -8,9 +8,14 @@ using RedRunner.Utilities;
 namespace RedRunner.Enemies
 {
 
+	/* Why aren't the eyes part of this?
+	 * Do they have to be placed seperately when building a level? */
 	public class Mace : Enemy
 	{
-
+		/* Can't serialize properties
+		 * https://docs.unity3d.com/ScriptReference/SerializeField.html
+		 * https://docs.unity3d.com/Manual/script-Serialization.html
+		 */
 		[SerializeField]
 		protected Collider2D m_Collider2D;
 		[SerializeField]
@@ -18,9 +23,9 @@ namespace RedRunner.Enemies
 		[SerializeField]
 		protected PathFollower m_PathFollower;
 		[SerializeField]
-		protected float m_MaulSpeed = 0.5f;
+		protected float m_MaulSpeed = 0.5f;		// Rename to "speed"
 		[SerializeField]
-		protected float m_MaulScale = 0.8f;
+		protected float m_MaulScale = 0.8f;		// Rename to "size"
 		[SerializeField]
 		protected ParticleSystem m_ParticleSystem;
 
@@ -51,8 +56,12 @@ namespace RedRunner.Enemies
 			Vector2 position = collision2D.contacts [0].point;
 			Character character = collision2D.collider.GetComponent<Character> ();
 			bool pressable = false;
+			
+			/* Checks for collisions */
 			for (int i = 0; i < collision2D.contacts.Length; i++) {
 				if (!pressable) {
+					/* Replace hard-coded values with object properties. I think 0.8 corresponds to the size of the mace, and 1 is a margin for the spikes?
+					 * It should be possible to do all four cases here with vector math, reducing it to one statment. This is terribly hard to read. */
 					pressable = (collision2D.contacts [i].normal.y >= 0.8f && collision2D.contacts [i].normal.y <= 1f && m_PathFollower.Velocity.y > m_MaulSpeed) ||
 					(collision2D.contacts [i].normal.y <= -0.8f && collision2D.contacts [i].normal.y >= -1f && m_PathFollower.Velocity.y < m_MaulSpeed) ||
 					(collision2D.contacts [i].normal.x >= 0.8f && collision2D.contacts [i].normal.x <= 1f && m_PathFollower.Velocity.x < m_MaulSpeed) ||
@@ -61,12 +70,15 @@ namespace RedRunner.Enemies
 					break;
 				}
 			}
+			/* If the mace hits the ground, play the "slam" sound. */
 			if (pressable && character == null && !collision2D.collider.CompareTag ("Player")) {
 				Slam (position);
 			}
+			/* If the mace hits the character, kill the character and play the "slam" sound */
 			if (character != null && !character.IsDead.Value) {
 				if (pressable) {
 					Slam (position);
+					/* Are we resizing the field of view? */
 					Vector3 scale = character.transform.localScale;
 					scale.y = m_MaulScale;
 					character.transform.localScale = scale;
@@ -76,9 +88,11 @@ namespace RedRunner.Enemies
 //			Camera.main.GetComponent<CameraControl> ().Shake (3f, 30, 300f);
 		}
 
+		/* Plays the "slam" sound */
 		public virtual void Slam (Vector3 position)
 		{
 			AudioManager.Singleton.PlayMaceSlamSound (transform.position);
+			/* Why do we need to create a particle to play a sound? */
 			ParticleSystem particle = Instantiate<ParticleSystem> (m_ParticleSystem, position, m_ParticleSystem.transform.rotation);
 			Destroy (particle.gameObject, particle.main.duration);
 		}
