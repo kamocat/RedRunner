@@ -342,7 +342,6 @@ namespace RedRunner.Characters
 			}
 		}
 
-		//Updates all the Parameters for the RedCharacter 
 		void LateUpdate ()
 		{
 			m_Animator.SetFloat ( "Speed", m_Speed.x );
@@ -358,11 +357,34 @@ namespace RedRunner.Characters
 			}
 		}
 
+		//		void OnCollisionEnter2D ( Collision2D collision2D )
+		//		{
+		//			bool isGround = collision2D.collider.CompareTag ( GroundCheck.GROUND_TAG );
+		//			if ( isGround && !m_IsDead )
+		//			{
+		//				bool isBottom = false;
+		//				for ( int i = 0; i < collision2D.contacts.Length; i++ )
+		//				{
+		//					if ( !isBottom )
+		//					{
+		//						isBottom = collision2D.contacts [ i ].normal.y == 1;
+		//					}
+		//					else
+		//					{
+		//						break;
+		//					}
+		//				}
+		//				if ( isBottom )
+		//				{
+		//					m_JumpParticleSystem.Play ();
+		//				}
+		//			}
+		//		}
+
 		#endregion
 
 		#region Private Methods
 
-		//Manipulates the Skeloton used in unity to close the eyes of the RedCharacter
 		IEnumerator CloseEye ()
 		{
 			m_ClosingEye = true;
@@ -389,7 +411,6 @@ namespace RedRunner.Characters
 
 		#region Public Methods
 
-		//Makes footstep swounds if RedCharacter is contacting the ground
 		public virtual void PlayFootstepSound ()
 		{
 			if ( m_GroundCheck.IsGrounded )
@@ -398,12 +419,15 @@ namespace RedRunner.Characters
 			}
 		}
 
-		//Calculates and sets the velocity and position of the players movement
 		public override void Move ( float horizontalAxis )
 		{
 			if ( !IsDead.Value )
 			{
 				float speed = m_CurrentRunSpeed;
+//				if ( CrossPlatformInputManager.GetButton ( "Walk" ) )
+//				{
+//					speed = m_WalkSpeed;
+				//				}
 				Vector2 velocity = m_Rigidbody2D.velocity;
 				velocity.x = speed * horizontalAxis;
 				m_Rigidbody2D.velocity = velocity;
@@ -422,7 +446,6 @@ namespace RedRunner.Characters
 			}
 		}
 
-		
 		public override void Jump ()
 		{
 			if ( !IsDead.Value )
